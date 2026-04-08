@@ -23,7 +23,13 @@ export default function LandingPage() {
               Changelog
             </Link>
             <Link
-              href="/"
+              href="/login"
+              className="text-sm text-vault-text-tertiary hover:text-vault-text-secondary transition-colors"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/chat"
               className="text-sm px-4 py-1.5 rounded-lg bg-vault-surface-hover text-vault-text-secondary hover:text-vault-text border border-vault-border-subtle hover:border-vault-border transition-all duration-150"
             >
               Open App →
