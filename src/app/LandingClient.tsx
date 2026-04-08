@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import { VaultLogo } from "@/components/VaultLogo";
 
-export default function LandingPage() {
+export default function LandingClient() {
   return (
     <div className="min-h-screen bg-vault-950 text-vault-100 flex flex-col relative overflow-hidden">
       {/* Ambient glow */}

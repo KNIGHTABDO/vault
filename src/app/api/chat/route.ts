@@ -993,7 +993,9 @@ export async function POST(request: Request) {
 
     orchestrationMessages.push(
       ...messages
-        .filter((message) => message.role === "user" || message.role === "assistant")
+        .filter((message): message is typeof message & { role: "user" | "assistant" } =>
+          message.role === "user" || message.role === "assistant"
+        )
         .map((message) => ({ role: message.role, content: message.content }))
     );
 
