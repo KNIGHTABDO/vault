@@ -1,1 +1,5 @@
-export { default } from "./(marketing)/page";
+import LandingClient from "./LandingClient";
+
+export default function LandingPage() {
+  return <LandingClient />;
+}
