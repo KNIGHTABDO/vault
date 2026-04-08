@@ -10,12 +10,10 @@ import {
   CheckSquare,
   Settings,
   LogOut,
-  MoreHorizontal,
-  Trash2,
-  Pencil,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatRelativeTime } from "@/lib/utils";
+import { signOut } from "@/lib/auth/actions";
 
 interface Conversation {
   id: string;
@@ -26,9 +24,13 @@ interface Conversation {
 interface SidebarProps {
   conversations: Conversation[];
   activeConversationId?: string;
+  user: {
+    email: string;
+    name: string;
+  };
 }
 
-export function Sidebar({ conversations, activeConversationId }: SidebarProps) {
+export function Sidebar({ conversations, activeConversationId, user }: SidebarProps) {
   const pathname = usePathname();
 
   const navItems = [
@@ -52,7 +54,7 @@ export function Sidebar({ conversations, activeConversationId }: SidebarProps) {
       {/* New Chat */}
       <div className="p-3">
         <Link
-          href="/"
+          href="/chat"
           className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-vault-text-secondary hover:text-vault-text hover:bg-vault-surface-hover transition-colors duration-150"
         >
           <MessageSquarePlus className="w-4 h-4" />
@@ -99,8 +101,8 @@ export function Sidebar({ conversations, activeConversationId }: SidebarProps) {
         ))}
       </div>
 
-      {/* Settings */}
-      <div className="border-t border-vault-border-subtle p-3">
+      {/* User + Settings */}
+      <div className="border-t border-vault-border-subtle p-3 space-y-1">
         <Link
           href="/settings"
           className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-vault-text-tertiary hover:text-vault-text-secondary hover:bg-vault-surface-hover transition-colors duration-150"
@@ -108,6 +110,21 @@ export function Sidebar({ conversations, activeConversationId }: SidebarProps) {
           <Settings className="w-4 h-4" />
           <span>Settings</span>
         </Link>
+        <div className="flex items-center justify-between px-3 py-2">
+          <div className="min-w-0">
+            <p className="text-xs text-vault-text truncate">{user.name}</p>
+            <p className="text-2xs text-vault-text-ghost truncate">{user.email}</p>
+          </div>
+          <form action={signOut}>
+            <button
+              type="submit"
+              className="p-1.5 rounded-md hover:bg-vault-surface-hover text-vault-text-ghost hover:text-vault-error transition-colors"
+              title="Sign out"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+            </button>
+          </form>
+        </div>
       </div>
     </aside>
   );
