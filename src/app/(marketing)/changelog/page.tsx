@@ -9,8 +9,19 @@ interface ChangelogEntry {
 
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: "0.1.1",
+    date: "April 8, 2026",
+    changes: [
+      { type: "improved", text: "Updated Gemini default model from 2.0 Flash to 2.5 Flash" },
+      { type: "improved", text: "Automatic model selection based on task type and conversation length" },
+      { type: "improved", text: "Long conversations (20+ messages) now use Gemini 2.5 Pro for better reasoning" },
+      { type: "fixed", text: "All build errors resolved — clean TypeScript compilation" },
+      { type: "fixed", text: "Lazy initialization for Supabase, Gemini, and Copilot providers" },
+    ],
+  },
+  {
     version: "0.1.0",
-    date: "April 2026",
+    date: "April 8, 2026",
     changes: [
       { type: "added", text: "Chat interface with streaming responses" },
       { type: "added", text: "Multimodal file upload (images, audio, video, PDFs)" },
@@ -19,7 +30,9 @@ const CHANGELOG: ChangelogEntry[] = [
       { type: "added", text: "Task creation and management" },
       { type: "added", text: "Dual AI provider support (Gemini + Copilot)" },
       { type: "added", text: "Premium dark theme design system" },
-      { type: "added", text: "Landing page, Privacy, and Terms pages" },
+      { type: "added", text: "Landing page, Privacy, Terms, and Changelog pages" },
+      { type: "added", text: "7 AI tools: web search, memory, file analysis, tasks, URL reader" },
+      { type: "added", text: "Smart AI router — picks best model per task" },
     ],
   },
 ];

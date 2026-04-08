@@ -20,7 +20,7 @@ Vault is a personal AI assistant with persistent memory, multimodal understandin
 - **Styling:** Tailwind CSS v4 + shadcn/ui
 - **Animation:** Motion (Framer Motion)
 - **Database:** Supabase (PostgreSQL + pgvector)
-- **AI:** Google Gemini 2.0 Flash + GitHub Copilot (GPT-4o)
+- **AI:** Google Gemini 2.5 Flash + 2.5 Pro, GitHub Copilot (GPT-4o)
 - **Fonts:** Geist Sans + Instrument Serif
 
 ## Getting Started
@@ -84,10 +84,22 @@ vault/
 
 ## AI Providers
 
-| Provider | Models | Used For |
-|----------|--------|----------|
-| **Google Gemini** | 2.0 Flash, 2.5 Pro | Multimodal, search, file analysis, summarization |
-| **GitHub Copilot** | GPT-4o (via proxy) | Writing, reasoning, complex conversation |
+| Provider | Model | Used For | Cost |
+|----------|-------|----------|------|
+| **Google Gemini** | 2.5 Flash (default) | Multimodal, search, file analysis, summarization | Free tier |
+| **Google Gemini** | 2.5 Pro (long context) | Extended conversations (20+ messages), complex reasoning | Free tier (limited) |
+| **GitHub Copilot** | GPT-4o (via proxy) | Writing, reasoning, conversation | Free (student plan) |
+
+### Model Selection
+
+Vault automatically picks the best model for each task:
+
+- **File uploads** → Gemini 2.5 Flash (multimodal)
+- **Web search** → Gemini 2.5 Flash (Google Search grounding)
+- **Summarization** → Gemini 2.5 Flash (fast + cheap)
+- **Short chat** → GPT-4o via Copilot (best conversation quality)
+- **Long chat (20+ messages)** → Gemini 2.5 Pro (1M context window)
+- **Writing tasks** → GPT-4o via Copilot (best writing quality)
 
 ## Design System
 
