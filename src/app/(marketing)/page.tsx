@@ -1,163 +1,107 @@
+"use client";
+
+import { motion } from "motion/react";
 import Link from "next/link";
-import { ArrowRight, Brain, Shield, Sparkles, Zap } from "lucide-react";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-vault-bg">
-      {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-vault-border-subtle">
-        <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 rounded-md bg-vault-accent flex items-center justify-center">
-              <span className="text-xs font-bold text-black">V</span>
-            </div>
-            <span className="text-sm font-medium text-vault-text tracking-tight">
-              Vault
-            </span>
+    <div className="min-h-screen bg-vault-950 text-vault-100 flex flex-col relative overflow-hidden">
+      {/* Ambient glow */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-vault-500/[0.04] blur-3xl" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-vault-400/[0.03] blur-3xl" />
+      </div>
+
+      <nav className="relative z-10 flex items-center justify-between px-6 py-5 max-w-5xl mx-auto w-full">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-vault-500/20 border border-vault-500/30 flex items-center justify-center">
+            <span className="text-vault-300 font-bold text-sm">V</span>
           </div>
-          <div className="flex items-center gap-6">
-            <Link
-              href="/changelog"
-              className="text-sm text-vault-text-tertiary hover:text-vault-text-secondary transition-colors"
-            >
-              Changelog
-            </Link>
-            <Link
-              href="/login"
-              className="text-sm text-vault-text-tertiary hover:text-vault-text-secondary transition-colors"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/chat"
-              className="text-sm px-4 py-1.5 rounded-lg bg-vault-surface-hover text-vault-text-secondary hover:text-vault-text border border-vault-border-subtle hover:border-vault-border transition-all duration-150"
-            >
-              Open App →
-            </Link>
-          </div>
+          <span className="font-display text-lg text-vault-300">vault</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link href="/login" className="text-sm text-vault-400 hover:text-vault-200 transition-colors">
+            Sign in
+          </Link>
+          <Link
+            href="/signup"
+            className="text-sm px-4 py-2 rounded-lg bg-vault-500/15 border border-vault-500/30 text-vault-300
+              hover:bg-vault-500/25 hover:border-vault-400/40 transition-all duration-300"
+          >
+            Get Started
+          </Link>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="pt-32 pb-20 px-6">
-        <div className="max-w-2xl mx-auto text-center">
-          <h1 className="font-serif text-5xl md:text-6xl text-vault-text tracking-tight leading-[1.1] mb-6">
-            Your AI, that
-            <br />
-            actually knows you.
-          </h1>
-          <p className="text-base text-vault-text-secondary leading-relaxed mb-10 max-w-md mx-auto">
-            Vault remembers everything you share — files, notes, voice, photos —
-            and becomes the most personal AI you&apos;ve ever used.
-          </p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-vault-accent hover:bg-vault-accent-hover text-black text-sm font-medium transition-colors duration-150"
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-3xl"
+        >
+          <motion.div
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5, type: "spring" }}
+            className="mb-8 inline-block"
           >
-            Get Started
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-
-        {/* Screenshot placeholder */}
-        <div className="max-w-4xl mx-auto mt-16">
-          <div className="rounded-xl border border-vault-border-subtle bg-vault-surface overflow-hidden shadow-2xl">
-            <div className="flex items-center gap-1.5 px-4 py-3 border-b border-vault-border-subtle">
-              <div className="w-2.5 h-2.5 rounded-full bg-vault-text-ghost" />
-              <div className="w-2.5 h-2.5 rounded-full bg-vault-text-ghost" />
-              <div className="w-2.5 h-2.5 rounded-full bg-vault-text-ghost" />
+            <div className="w-20 h-20 mx-auto rounded-2xl bg-vault-500/20 border border-vault-500/30 flex items-center justify-center
+              shadow-[0_0_60px_rgba(168,139,107,0.15)]">
+              <span className="font-display text-4xl text-vault-300">V</span>
             </div>
-            <div className="p-8 flex items-center justify-center h-[300px]">
-              <div className="text-center">
-                <Sparkles className="w-10 h-10 text-vault-accent mx-auto mb-4 opacity-50" />
-                <p className="text-sm text-vault-text-ghost">
-                  [App preview will appear here]
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+          </motion.div>
 
-      {/* Features */}
-      <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8">
-            <FeatureCard
-              icon={Brain}
-              title="Remembers everything"
-              description="Every conversation, file, and detail is stored in memory. Vault never forgets."
-            />
-            <FeatureCard
-              icon={Zap}
-              title="Takes action"
-              description="Search the web, create tasks, analyze files. Vault does things, not just talks."
-            />
-            <FeatureCard
-              icon={Shield}
-              title="Your data, your control"
-              description="Everything is stored in your own Supabase instance. No data leaves your hands."
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-20 px-6">
-        <div className="max-w-md mx-auto text-center">
-          <h2 className="font-serif text-2xl text-vault-text tracking-tight mb-4">
-            Start building your memory.
-          </h2>
-          <p className="text-sm text-vault-text-tertiary mb-8">
-            The more you use Vault, the smarter it gets about you.
-          </p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-vault-accent hover:bg-vault-accent-hover text-black text-sm font-medium transition-colors duration-150"
+          <motion.h1
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            className="font-display text-5xl md:text-6xl lg:text-7xl text-vault-100 mb-6 leading-tight"
           >
-            Open Vault
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </section>
+            Your AI, that actually{" "}
+            <span className="text-vault-400">knows you.</span>
+          </motion.h1>
 
-      {/* Footer */}
-      <footer className="border-t border-vault-border-subtle py-8 px-6">
-        <div className="max-w-4xl mx-auto flex items-center justify-between text-xs text-vault-text-ghost">
-          <span>© 2026 Vault</span>
-          <div className="flex items-center gap-6">
-            <Link href="/privacy" className="hover:text-vault-text-tertiary transition-colors">
-              Privacy
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="text-lg md:text-xl text-vault-400 mb-10 max-w-xl mx-auto leading-relaxed"
+          >
+            Private. Contextual. Yours. Vault remembers so your AI doesn&apos;t have to start from zero every time.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+          >
+            <Link
+              href="/signup"
+              className="px-8 py-3.5 rounded-xl font-medium text-sm
+                bg-vault-500/20 border border-vault-500/30 text-vault-200
+                hover:bg-vault-500/30 hover:border-vault-400/40
+                shadow-[0_0_30px_rgba(168,139,107,0.1)] hover:shadow-[0_0_40px_rgba(168,139,107,0.2)]
+                transition-all duration-300"
+            >
+              Start Building →
             </Link>
-            <Link href="/terms" className="hover:text-vault-text-tertiary transition-colors">
-              Terms
+            <Link
+              href="/login"
+              className="px-8 py-3.5 rounded-xl font-medium text-sm text-vault-400
+                border border-vault-800 hover:border-vault-600 hover:text-vault-300
+                transition-all duration-300"
+            >
+              Sign In
             </Link>
-            <Link href="/changelog" className="hover:text-vault-text-tertiary transition-colors">
-              Changelog
-            </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
+      </main>
+
+      <footer className="relative z-10 py-6 text-center text-xs text-vault-600">
+        Built with open source — because your data shouldn&apos;t be locked away.
       </footer>
-    </div>
-  );
-}
-
-function FeatureCard({
-  icon: Icon,
-  title,
-  description,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="p-6 rounded-xl border border-vault-border-subtle bg-vault-surface hover:bg-vault-surface-hover transition-colors duration-150">
-      <Icon className="w-5 h-5 text-vault-accent mb-4" />
-      <h3 className="text-sm font-medium text-vault-text mb-2">{title}</h3>
-      <p className="text-sm text-vault-text-tertiary leading-relaxed">
-        {description}
-      </p>
     </div>
   );
 }

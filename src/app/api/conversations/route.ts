@@ -1,9 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-export async function createClient() {
+export async function GET() {
   const cookieStore = await cookies();
-  return createServerClient(
+  const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -15,4 +16,16 @@ export async function createClient() {
       },
     }
   );
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { data, error } = await supabase
+    .from("conversations")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("updated_at", { ascending: false })
+    .limit(50);
+
+  return NextResponse.json({ conversations: data || [], error: error?.message });
 }
