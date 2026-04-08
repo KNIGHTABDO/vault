@@ -1,9 +1,14 @@
 import { z } from "zod";
 
 const envSchema = z.object({
-  GOOGLE_API_KEY: z.string().min(1, "GOOGLE_API_KEY is required"),
-  COPILOT_API_URL: z.string().url().default("http://localhost:4141/v1"),
-  COPILOT_API_KEY: z.string().min(1, "COPILOT_API_KEY is required"),
+  GEMINI_API_KEY: z.string().min(1).optional(),
+  GOOGLE_API_KEY: z.string().min(1).optional(),
+  GEMINI_MODEL: z.string().min(1).default("gemini-3-flash-preview"),
+  GEMINI_EMBEDDING_MODEL: z.string().min(1).default("gemini-embedding-2-preview"),
+  GITHUB_TOKEN: z.string().min(1).optional(),
+  COPILOT_API_URL: z.string().url().optional(),
+  COPILOT_API_KEY: z.string().min(1).optional(),
+  COPILOT_MODEL: z.string().min(1).default("gpt-4o"),
   NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),

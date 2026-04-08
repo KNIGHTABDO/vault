@@ -48,7 +48,7 @@ export function ConversationList({
         <button
           onClick={onNew}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
-            bg-gradient-to-r from-vault-500/20 to-vault-400/10 border border-vault-500/20
+            bg-linear-to-r from-vault-500/20 to-vault-400/10 border border-vault-500/20
             text-vault-300 hover:border-vault-400/40 hover:text-vault-200
             transition-all duration-300 group"
         >
@@ -68,7 +68,7 @@ export function ConversationList({
       <div className="flex-1 overflow-y-auto px-3 pb-3 space-y-4 scrollbar-thin">
         {Object.entries(grouped).map(([label, convs]) => (
           <div key={label}>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-vault-500 px-2 mb-1.5">
+            <p className="text-2xs font-semibold uppercase tracking-wider text-vault-500 px-2 mb-1.5">
               {label}
             </p>
             <div className="space-y-0.5">

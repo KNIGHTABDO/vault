@@ -41,10 +41,12 @@ export default function RootLayout({
           position="bottom-right"
           toastOptions={{
             style: {
-              background: "var(--vault-surface-elevated)",
-              border: "1px solid var(--vault-border)",
-              color: "var(--vault-text)",
+              background: "rgba(20, 20, 23, 0.96)",
+              border: "1px solid rgba(63, 63, 70, 0.65)",
+              color: "#f4f4f5",
               fontSize: "0.8125rem",
+              borderRadius: "12px",
+              boxShadow: "0 12px 28px rgba(0, 0, 0, 0.35)",
             },
           }}
           theme="dark"

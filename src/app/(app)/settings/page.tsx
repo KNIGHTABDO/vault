@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function SettingsPage() {
   const sections = [
     { href: "/settings/profile", label: "Profile", desc: "Name, avatar, preferences", icon: "👤" },
-    { href: "/settings/providers", label: "AI Providers", desc: "Configure API keys and models", icon: "🤖" },
+    { href: "/settings/providers", label: "Assistant", desc: "Engine reliability and response behavior", icon: "✨" },
     { href: "/settings/memory", label: "Memory", desc: "Manage stored memories", icon: "🧠" },
   ];
 

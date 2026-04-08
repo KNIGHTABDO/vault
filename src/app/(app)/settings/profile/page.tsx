@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 export default function ProfileSettings() {
   const [email, setEmail] = useState("");
@@ -21,9 +22,15 @@ export default function ProfileSettings() {
   }, []);
 
   async function handleSave() {
+    const savingToastId = toast.loading("Saving profile...");
     const supabase = createClient();
-    await supabase.auth.updateUser({ data: { full_name: fullName } });
+    const { error } = await supabase.auth.updateUser({ data: { full_name: fullName } });
+    if (error) {
+      toast.error(error.message || "Unable to save profile.", { id: savingToastId });
+      return;
+    }
     setSaved(true);
+    toast.success("Profile saved.", { id: savingToastId });
     setTimeout(() => setSaved(false), 2000);
   }
 

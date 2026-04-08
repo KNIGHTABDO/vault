@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "node:path";
 
 const nextConfig: NextConfig = {
   images: {
@@ -8,6 +9,10 @@ const nextConfig: NextConfig = {
         hostname: "*.supabase.co",
       },
     ],
+  },
+  outputFileTracingRoot: path.resolve(process.cwd()),
+  outputFileTracingIncludes: {
+    "/*": ["./scripts/extract-pdf.mjs"],
   },
 };
 

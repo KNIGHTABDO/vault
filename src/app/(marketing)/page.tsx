@@ -2,22 +2,26 @@
 
 import { motion } from "motion/react";
 import Link from "next/link";
+import { VaultLogo } from "@/components/VaultLogo";
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-vault-950 text-vault-100 flex flex-col relative overflow-hidden">
       {/* Ambient glow */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-vault-500/[0.04] blur-3xl" />
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-vault-400/[0.03] blur-3xl" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-150 h-150 rounded-full bg-vault-500/[0.04] blur-3xl" />
+        <div className="absolute top-0 right-0 w-100 h-100 rounded-full bg-vault-400/[0.03] blur-3xl" />
       </div>
 
       <nav className="relative z-10 flex items-center justify-between px-6 py-5 max-w-5xl mx-auto w-full">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-vault-500/20 border border-vault-500/30 flex items-center justify-center">
-            <span className="text-vault-300 font-bold text-sm">V</span>
-          </div>
+          <VaultLogo size="sm" animate={false} />
           <span className="font-display text-lg text-vault-300">vault</span>
+        </div>
+        <div className="hidden md:flex items-center gap-4 text-sm text-vault-500">
+          <Link href="/changelog" className="hover:text-vault-300 transition-colors">Changelog</Link>
+          <Link href="/privacy" className="hover:text-vault-300 transition-colors">Privacy</Link>
+          <Link href="/terms" className="hover:text-vault-300 transition-colors">Terms</Link>
         </div>
         <div className="flex items-center gap-3">
           <Link href="/login" className="text-sm text-vault-400 hover:text-vault-200 transition-colors">
@@ -33,6 +37,14 @@ export default function LandingPage() {
         </div>
       </nav>
 
+      <div className="relative z-10 md:hidden px-6 -mt-1 mb-3">
+        <div className="flex flex-wrap items-center gap-3 text-xs text-vault-500">
+          <Link href="/changelog" className="hover:text-vault-300 transition-colors">Changelog</Link>
+          <Link href="/privacy" className="hover:text-vault-300 transition-colors">Privacy</Link>
+          <Link href="/terms" className="hover:text-vault-300 transition-colors">Terms</Link>
+        </div>
+      </div>
+
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -46,9 +58,9 @@ export default function LandingPage() {
             transition={{ duration: 0.5, type: "spring" }}
             className="mb-8 inline-block"
           >
-            <div className="w-20 h-20 mx-auto rounded-2xl bg-vault-500/20 border border-vault-500/30 flex items-center justify-center
+            <div className="w-24 h-24 mx-auto rounded-2xl bg-vault-500/15 border border-vault-500/30 flex items-center justify-center
               shadow-[0_0_60px_rgba(168,139,107,0.15)]">
-              <span className="font-display text-4xl text-vault-300">V</span>
+              <VaultLogo size="lg" />
             </div>
           </motion.div>
 
@@ -99,8 +111,13 @@ export default function LandingPage() {
         </motion.div>
       </main>
 
-      <footer className="relative z-10 py-6 text-center text-xs text-vault-600">
-        Built with open source — because your data shouldn&apos;t be locked away.
+      <footer className="relative z-10 py-6 text-center text-xs text-vault-600 space-y-2">
+        <div className="flex items-center justify-center gap-4">
+          <Link href="/changelog" className="hover:text-vault-300 transition-colors">Changelog</Link>
+          <Link href="/privacy" className="hover:text-vault-300 transition-colors">Privacy</Link>
+          <Link href="/terms" className="hover:text-vault-300 transition-colors">Terms</Link>
+        </div>
+        <p>Built with open source — because your data shouldn&apos;t be locked away.</p>
       </footer>
     </div>
   );

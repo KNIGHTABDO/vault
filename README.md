@@ -1,113 +1,85 @@
 # Vault
 
-**Your AI, that actually knows you.**
+Vault is a production-ready personal AI workspace with chat, memory, tasks, and file grounding.
 
-Vault is a personal AI assistant with persistent memory, multimodal understanding, and real tool usage. It remembers everything you share — files, notes, voice, photos — and becomes the most personal AI you've ever used.
+## Highlights
 
-![Vault Preview](public/og.png)
-
-## Features
-
-- **Persistent Memory** — Vault remembers every conversation, file, and detail
-- **Multimodal Intake** — Upload images, audio, video, PDFs — Gemini handles it all
-- **Tool Usage** — Web search, task creation, file analysis, URL reading
-- **Dual AI Providers** — Gemini for multimodal + search, Copilot for writing + reasoning
-- **Premium Design** — Dark, minimal, Anthropic-level UI with Geist fonts
+- Persistent user memory and task management
+- Upload and semantic retrieval for supported files (including PDF)
+- Streaming chat with visible thinking states and action feedback
+- Mobile-ready app shell (drawer + bottom navigation)
+- Privacy, Terms, and Changelog pages available in-app and on landing
 
 ## Tech Stack
 
-- **Framework:** Next.js 15 (App Router) + React 19
-- **Styling:** Tailwind CSS v4 + shadcn/ui
-- **Animation:** Motion (Framer Motion)
-- **Database:** Supabase (PostgreSQL + pgvector)
-- **AI:** Google Gemini 2.5 Flash + 2.5 Pro, GitHub Copilot (GPT-4o)
-- **Fonts:** Geist Sans + Instrument Serif
+- Next.js 15 (App Router), React 19, TypeScript
+- Supabase (Auth, Postgres, Storage, pgvector)
+- Gemini + Copilot orchestration
+- Tailwind CSS v4 + Motion
 
-## Getting Started
+## Environment Setup
 
-### 1. Clone the repo
+1. Install dependencies:
 
 ```bash
-git clone https://github.com/KNIGHTABDO/vault.git
-cd vault
 npm install
 ```
 
-### 2. Set up environment variables
+2. Copy environment template:
 
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 ```
 
-Fill in your API keys:
+3. Fill required values in `.env`:
 
-- **GOOGLE_API_KEY** — Get from [Google AI Studio](https://aistudio.google.com/apikey)
-- **COPILOT_API_KEY** — Get from [copilot-api](https://github.com/ericc-ch/copilot-api)
-- **Supabase keys** — Get from your [Supabase project](https://supabase.com)
+- `GEMINI_API_KEY`
+- `GEMINI_MODEL`
+- `GEMINI_EMBEDDING_MODEL`
+- `GITHUB_TOKEN` (optional, for direct Copilot routing)
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXT_PUBLIC_APP_URL`
+- `CHANGELOG_FEED_URL` (optional JSON feed for remote changelog)
 
-### 3. Set up the database
+## Database Setup
 
-Run `supabase/migrations/001_initial_schema.sql` in your Supabase SQL Editor.
+Run these migrations on Supabase in order:
 
-### 4. Run the app
+- `supabase/migrations/001_initial_schema.sql`
+- `supabase/migrations/002_file_ingestion_and_chunks.sql`
+
+## Local Development
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Then open `http://localhost:3000`.
 
-## Project Structure
+## Quality Checks
 
-```
-vault/
-├── app/
-│   ├── (marketing)/     # Landing, Privacy, Terms, Changelog
-│   ├── (app)/           # Authenticated app (chat, memory, files, tasks, settings)
-│   └── api/             # API routes (chat, upload, memory, tools)
-├── components/
-│   ├── chat/            # ChatInput, MessageBubble, EmptyState
-│   ├── sidebar/         # Navigation sidebar
-│   └── ui/              # shadcn/ui base components
-├── lib/
-│   ├── ai/
-│   │   ├── providers/   # Gemini + Copilot SDK wrappers
-│   │   ├── tools/       # Tool implementations
-│   │   ├── prompts/     # System prompts
-│   │   └── router.ts    # Decides which provider to use
-│   ├── memory/          # Memory storage, retrieval, compression
-│   ├── files/           # File upload and processing
-│   └── db/              # Supabase client + types
-└── supabase/
-    └── migrations/      # Database schema
+```bash
+npm run lint
 ```
 
-## AI Providers
+## Deploy to Vercel
 
-| Provider | Model | Used For | Cost |
-|----------|-------|----------|------|
-| **Google Gemini** | 2.5 Flash (default) | Multimodal, search, file analysis, summarization | Free tier |
-| **Google Gemini** | 2.5 Pro (long context) | Extended conversations (20+ messages), complex reasoning | Free tier (limited) |
-| **GitHub Copilot** | GPT-4o (via proxy) | Writing, reasoning, conversation | Free (student plan) |
+1. Push this repository to GitHub.
+2. Import the project in Vercel.
+3. Set all environment variables from `.env.example`.
+4. Deploy.
 
-### Model Selection
+Deployment notes:
 
-Vault automatically picks the best model for each task:
+- `next.config.ts` is configured to include `scripts/extract-pdf.mjs` in output tracing.
+- Supabase service role key must be set for server-side ingestion and embedding workflows.
 
-- **File uploads** → Gemini 2.5 Flash (multimodal)
-- **Web search** → Gemini 2.5 Flash (Google Search grounding)
-- **Summarization** → Gemini 2.5 Flash (fast + cheap)
-- **Short chat** → GPT-4o via Copilot (best conversation quality)
-- **Long chat (20+ messages)** → Gemini 2.5 Pro (1M context window)
-- **Writing tasks** → GPT-4o via Copilot (best writing quality)
+## Repository Hygiene
 
-## Design System
-
-- **Background:** `#09090B` (near black)
-- **Surface:** `#0F0F12` (cards, panels)
-- **Text:** `#FAFAFA` (warm white)
-- **Accent:** `#F59E0B` (warm amber — no AI purple)
-- **Fonts:** Geist Sans (UI), Instrument Serif (headings)
+- Keep secrets only in `.env` and Vercel env settings.
+- Do not commit local fixture files or temporary parser/debug artifacts.
 
 ## License
 

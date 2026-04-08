@@ -25,7 +25,7 @@ export default function MemorySettings() {
         <div className="space-y-2 max-h-96 overflow-y-auto scrollbar-thin">
           {memories.map((m: any) => (
             <div key={m.id} className="p-3 rounded-lg bg-vault-800/30 border border-vault-700/20">
-              <p className="text-xs font-medium text-vault-300">{m.key}</p>
+              <p className="text-xs font-medium text-vault-300">{m.metadata?.key || m.type || "memory"}</p>
               <p className="text-xs text-vault-400 mt-1 truncate">{m.content}</p>
             </div>
           ))}

@@ -2,8 +2,15 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { toast } from "sonner";
 
-export function UserMenu({ email }: { email: string }) {
+export function UserMenu({
+  email,
+  compact = false,
+}: {
+  email: string;
+  compact?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -18,31 +25,50 @@ export function UserMenu({ email }: { email: string }) {
   }, []);
 
   async function handleSignOut() {
-    await fetch("/api/auth/signout", { method: "POST" });
-    window.location.href = "/login";
+    const signOutToastId = toast.loading("Signing out...");
+    try {
+      const response = await fetch("/api/auth/signout", { method: "POST" });
+      if (!response.ok) {
+        throw new Error("Unable to sign out.");
+      }
+      toast.success("Signed out.", { id: signOutToastId });
+      window.location.href = "/login";
+    } catch (error: any) {
+      toast.error(error?.message || "Unable to sign out.", { id: signOutToastId });
+    }
   }
 
   const initial = email?.charAt(0).toUpperCase() || "?";
+  const menuPositionClasses = compact
+    ? "absolute left-full ml-2 bottom-0 w-56"
+    : "absolute bottom-full left-0 mb-2 w-56";
 
   return (
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-vault-800/50 transition-colors"
+        className={`flex items-center gap-2 rounded-lg hover:bg-vault-800/50 transition-colors ${
+          compact ? "w-10 h-10 justify-center px-0 py-0" : "px-2 py-1.5"
+        }`}
+        aria-label="Open account menu"
       >
         <div className="w-7 h-7 rounded-full bg-vault-500/30 border border-vault-500/30 flex items-center justify-center text-vault-300 text-xs font-bold">
           {initial}
         </div>
-        <span className="text-xs text-vault-400 max-w-[120px] truncate">{email}</span>
-        <svg
-          className={`w-3 h-3 text-vault-500 transition-transform ${open ? "rotate-180" : ""}`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path d="M19 9l-7 7-7-7" />
-        </svg>
+        {!compact && (
+          <>
+            <span className="text-xs text-vault-400 max-w-30 truncate">{email}</span>
+            <svg
+              className={`w-3 h-3 text-vault-500 transition-transform ${open ? "rotate-180" : ""}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path d="M19 9l-7 7-7-7" />
+            </svg>
+          </>
+        )}
       </button>
 
       <AnimatePresence>
@@ -52,7 +78,7 @@ export function UserMenu({ email }: { email: string }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 5, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute bottom-full left-0 mb-2 w-56 rounded-xl bg-vault-900 border border-vault-700/50 shadow-2xl overflow-hidden z-50"
+            className={`${menuPositionClasses} rounded-xl bg-vault-900 border border-vault-700/50 shadow-2xl overflow-hidden z-50`}
           >
             <div className="p-3 border-b border-vault-800">
               <p className="text-xs text-vault-400 truncate">{email}</p>

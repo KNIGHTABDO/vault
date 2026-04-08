@@ -139,6 +139,65 @@
     outline-offset: 2px;
     border-radius: 4px;
   }
+
+  :where(
+    a[href],
+    button,
+    [role="button"],
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"],
+    label:has(input[type="file"])
+  ) {
+    cursor: pointer;
+    transition-property: color, background-color, border-color, box-shadow, transform, opacity, filter;
+    transition-duration: 160ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  :where(
+    button,
+    [role="button"],
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"],
+    label:has(input[type="file"])
+  ):disabled {
+    cursor: not-allowed;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    :where(
+      button,
+      [role="button"],
+      input[type="button"],
+      input[type="submit"],
+      input[type="reset"],
+      label:has(input[type="file"])
+    ):not(:disabled):hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.2), 0 10px 22px rgba(0, 0, 0, 0.22);
+    }
+
+    a[href]:not([aria-disabled="true"]):hover {
+      filter: brightness(1.08);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+    }
+  }
+
+  :where(
+    button,
+    [role="button"],
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"],
+    label:has(input[type="file"])
+  ):not(:disabled):active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
 }
 
 .font-serif {
@@ -188,4 +247,23 @@
   background: rgba(15, 15, 18, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+}
+
+@keyframes vault-skeleton-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgba(39, 39, 42, 0.55);
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(250, 250, 250, 0.12), transparent);
+  animation: vault-skeleton-shimmer 1.5s linear infinite;
 }

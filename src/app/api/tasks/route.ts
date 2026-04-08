@@ -2,9 +2,6 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-const MEMORY_TYPES = new Set(["fact", "event", "preference", "person", "project", "file", "skill"]);
-const MEMORY_SOURCES = new Set(["conversation", "upload", "voice", "manual"]);
-
 export async function GET() {
   const cookieStore = await cookies();
   const supabase = createServerClient(
@@ -23,14 +20,19 @@ export async function GET() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { data } = await supabase
-    .from("memories")
+  const { data, error } = await supabase
+    .from("tasks")
     .select("*")
     .eq("user_id", user.id)
+    .order("completed", { ascending: true })
     .order("created_at", { ascending: false })
-    .limit(100);
+    .limit(200);
 
-  return NextResponse.json({ memories: data || [] });
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ tasks: data || [] });
 }
 
 export async function POST(request: Request) {
@@ -53,29 +55,28 @@ export async function POST(request: Request) {
 
   const body = await request.json();
   const content = typeof body?.content === "string" ? body.content.trim() : "";
-  const key = typeof body?.key === "string" ? body.key.trim() : "";
-  const type = typeof body?.type === "string" && MEMORY_TYPES.has(body.type) ? body.type : "fact";
-  const source = typeof body?.source === "string" && MEMORY_SOURCES.has(body.source) ? body.source : "manual";
-
-  let importance = Number(body?.importance);
-  if (!Number.isFinite(importance)) importance = 0.6;
-  importance = Math.max(0, Math.min(1, importance));
 
   if (!content) {
-    return NextResponse.json({ error: "Content is required" }, { status: 400 });
+    return NextResponse.json({ error: "Task content is required" }, { status: 400 });
   }
 
-  const payload = {
+  const payload: {
+    user_id: string;
+    content: string;
+    completed: boolean;
+    due_date?: string;
+  } = {
     user_id: user.id,
-    type,
-    source,
     content,
-    importance,
-    metadata: key ? { key } : {},
+    completed: false,
   };
 
+  if (typeof body?.dueDate === "string" && body.dueDate.trim()) {
+    payload.due_date = body.dueDate;
+  }
+
   const { data, error } = await supabase
-    .from("memories")
+    .from("tasks")
     .insert(payload)
     .select("*")
     .single();
@@ -84,5 +85,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ memory: data });
+  return NextResponse.json({ task: data });
 }

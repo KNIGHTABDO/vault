@@ -2,38 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-const MEMORY_TYPES = new Set(["fact", "event", "preference", "person", "project", "file", "skill"]);
-const MEMORY_SOURCES = new Set(["conversation", "upload", "voice", "manual"]);
-
-export async function GET() {
-  const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: (cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[]) => {
-          try { cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options)); } catch {}
-        },
-      },
-    }
-  );
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const { data } = await supabase
-    .from("memories")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false })
-    .limit(100);
-
-  return NextResponse.json({ memories: data || [] });
-}
-
-export async function POST(request: Request) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const cookieStore = await cookies();
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -52,31 +22,23 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json();
-  const content = typeof body?.content === "string" ? body.content.trim() : "";
-  const key = typeof body?.key === "string" ? body.key.trim() : "";
-  const type = typeof body?.type === "string" && MEMORY_TYPES.has(body.type) ? body.type : "fact";
-  const source = typeof body?.source === "string" && MEMORY_SOURCES.has(body.source) ? body.source : "manual";
+  const updates: { completed?: boolean; content?: string; due_date?: string | null } = {};
 
-  let importance = Number(body?.importance);
-  if (!Number.isFinite(importance)) importance = 0.6;
-  importance = Math.max(0, Math.min(1, importance));
-
-  if (!content) {
-    return NextResponse.json({ error: "Content is required" }, { status: 400 });
+  if (typeof body?.completed === "boolean") {
+    updates.completed = body.completed;
+  }
+  if (typeof body?.content === "string" && body.content.trim()) {
+    updates.content = body.content.trim();
+  }
+  if (typeof body?.dueDate === "string") {
+    updates.due_date = body.dueDate.trim() ? body.dueDate : null;
   }
 
-  const payload = {
-    user_id: user.id,
-    type,
-    source,
-    content,
-    importance,
-    metadata: key ? { key } : {},
-  };
-
   const { data, error } = await supabase
-    .from("memories")
-    .insert(payload)
+    .from("tasks")
+    .update(updates)
+    .eq("id", id)
+    .eq("user_id", user.id)
     .select("*")
     .single();
 
@@ -84,5 +46,37 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ memory: data });
+  return NextResponse.json({ task: data });
+}
+
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const cookieStore = await cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => cookieStore.getAll(),
+        setAll: (cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[]) => {
+          try { cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options)); } catch {}
+        },
+      },
+    }
+  );
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { error } = await supabase
+    .from("tasks")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
 }
