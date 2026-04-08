@@ -11,13 +11,13 @@ function getGenAI(): GoogleGenerativeAI {
   return _genAI;
 }
 
-export function getGeminiModel(modelName = "gemini-2.0-flash") {
+export function getGeminiModel(modelName = "gemini-2.5-flash") {
   return getGenAI().getGenerativeModel({ model: modelName });
 }
 
 export function getGeminiModelWithTools(
   tools: Record<string, unknown>[],
-  modelName = "gemini-2.0-flash"
+  modelName = "gemini-2.5-flash"
 ) {
   return getGenAI().getGenerativeModel({
     model: modelName,
@@ -38,7 +38,7 @@ export async function analyzeFile(
   mimeType: string,
   instruction: string
 ): Promise<string> {
-  const model = getGenAI().getGenerativeModel({ model: "gemini-2.0-flash" });
+  const model = getGenAI().getGenerativeModel({ model: "gemini-2.5-flash" });
 
   const result = await model.generateContent([
     {
@@ -63,7 +63,7 @@ export async function chatWithGemini(
   }
 ) {
   const modelName =
-    messages.length > 10 ? "gemini-2.5-pro" : "gemini-2.0-flash";
+    messages.length > 10 ? "gemini-2.5-pro" : "gemini-2.5-flash";
   const model = getGenAI().getGenerativeModel({
     model: modelName,
     systemInstruction: options?.systemPrompt,

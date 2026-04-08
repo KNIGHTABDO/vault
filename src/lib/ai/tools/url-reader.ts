@@ -8,7 +8,7 @@ export async function readUrl(
   if (!apiKey) return JSON.stringify({ success: false, error: "GOOGLE_API_KEY not set" });
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
   const result = await model.generateContent([
     `Read and summarize this URL: ${url}\n\nProvide a clear summary of the key points. Include the title and main topics.`,

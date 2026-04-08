@@ -32,7 +32,7 @@ export function routeTask(taskType: TaskType, context?: {
   if (context?.hasFiles) {
     return {
       provider: "gemini",
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
       useSearchGrounding: false,
     };
   }
@@ -42,35 +42,35 @@ export function routeTask(taskType: TaskType, context?: {
     case "multimodal":
       return {
         provider: "gemini",
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         useSearchGrounding: false,
       };
 
     case "search":
       return {
         provider: "gemini",
-        model: "gemini-2.0-flash",
-        useSearchGrounding: true, // Google Search grounding
+        model: "gemini-2.5-flash",
+        useSearchGrounding: true,
       };
 
     case "summarize":
       return {
         provider: "gemini",
-        model: "gemini-2.0-flash", // Fast + cheap for summarization
+        model: "gemini-2.5-flash",
         useSearchGrounding: false,
       };
 
     case "extract":
       return {
         provider: "gemini",
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         useSearchGrounding: false,
       };
 
     case "writing":
       return {
         provider: "copilot",
-        model: "gpt-4o", // Best for writing
+        model: "gpt-4o",
         useSearchGrounding: false,
       };
 
@@ -83,12 +83,12 @@ export function routeTask(taskType: TaskType, context?: {
 
     case "chat":
     default:
-      // For long conversations, use Gemini (1M context)
-      // For short ones, use Copilot (better conversation quality)
+      // Long conversations → Gemini 2.5 Pro (1M context, strong reasoning)
+      // Short conversations → GPT-4o via Copilot (best conversation quality)
       if (context?.messageCount && context.messageCount > 20) {
         return {
           provider: "gemini",
-          model: "gemini-2.5-pro", // Long context needs the big model
+          model: "gemini-2.5-pro",
           useSearchGrounding: false,
         };
       }
