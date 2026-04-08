@@ -1,6 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -84,6 +82,19 @@
   --color-sidebar-accent-foreground: var(--color-vault-text);
   --color-sidebar-border: var(--color-vault-border-subtle);
   --color-sidebar-ring: var(--color-vault-accent);
+
+  /* Animation keyframes */
+  @keyframes accordion-down {
+    from { height: 0; }
+    to { height: var(--radix-accordion-content-height, auto); }
+  }
+  @keyframes accordion-up {
+    from { height: var(--radix-accordion-content-height, auto); }
+    to { height: 0; }
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
 }
 
 @layer base {
@@ -139,9 +150,7 @@
   @apply text-vault-text-secondary leading-relaxed;
   font-size: 0.9375rem;
 }
-.prose-vault h1,
-.prose-vault h2,
-.prose-vault h3 {
+.prose-vault h1, .prose-vault h2, .prose-vault h3 {
   @apply text-vault-text font-medium mt-6 mb-3;
   letter-spacing: -0.01em;
 }
