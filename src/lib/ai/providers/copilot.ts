@@ -1,5 +1,9 @@
-const COPILOT_URL = process.env.COPILOT_API_URL || "http://localhost:4141/v1";
-const COPILOT_KEY = process.env.COPILOT_API_KEY || "dummy";
+function getCopilotConfig() {
+  return {
+    url: process.env.COPILOT_API_URL || "http://localhost:4141/v1",
+    key: process.env.COPILOT_API_KEY || "dummy",
+  };
+}
 
 interface ChatMessage {
   role: "system" | "user" | "assistant" | "tool";
@@ -19,6 +23,7 @@ export async function chatWithCopilot(
   messages: ChatMessage[],
   options: CopilotOptions = {}
 ): Promise<string> {
+  const { url, key } = getCopilotConfig();
   const {
     model = "gpt-4o",
     temperature = 0.7,
@@ -26,11 +31,11 @@ export async function chatWithCopilot(
     stream = false,
   } = options;
 
-  const response = await fetch(`${COPILOT_URL}/chat/completions`, {
+  const response = await fetch(`${url}/chat/completions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${COPILOT_KEY}`,
+      Authorization: `Bearer ${key}`,
     },
     body: JSON.stringify({
       model,
@@ -55,17 +60,18 @@ export async function* streamCopilot(
   messages: ChatMessage[],
   options: CopilotOptions = {}
 ): AsyncGenerator<string> {
+  const { url, key } = getCopilotConfig();
   const {
     model = "gpt-4o",
     temperature = 0.7,
     maxTokens = 2048,
   } = options;
 
-  const response = await fetch(`${COPILOT_URL}/chat/completions`, {
+  const response = await fetch(`${url}/chat/completions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${COPILOT_KEY}`,
+      Authorization: `Bearer ${key}`,
     },
     body: JSON.stringify({
       model,

@@ -1,17 +1,25 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const apiKey = process.env.GOOGLE_API_KEY!;
-const genAI = new GoogleGenerativeAI(apiKey);
+let _genAI: GoogleGenerativeAI | null = null;
+
+function getGenAI(): GoogleGenerativeAI {
+  if (!_genAI) {
+    const key = process.env.GOOGLE_API_KEY;
+    if (!key) throw new Error("GOOGLE_API_KEY is not set");
+    _genAI = new GoogleGenerativeAI(key);
+  }
+  return _genAI;
+}
 
 export function getGeminiModel(modelName = "gemini-2.0-flash") {
-  return genAI.getGenerativeModel({ model: modelName });
+  return getGenAI().getGenerativeModel({ model: modelName });
 }
 
 export function getGeminiModelWithTools(
   tools: Record<string, unknown>[],
   modelName = "gemini-2.0-flash"
 ) {
-  return genAI.getGenerativeModel({
+  return getGenAI().getGenerativeModel({
     model: modelName,
     tools: [{ functionDeclarations: tools as never[] }],
   });
@@ -19,29 +27,9 @@ export function getGeminiModelWithTools(
 
 // Generate embedding for memory/vector search
 export async function generateEmbedding(text: string): Promise<number[]> {
-  const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
+  const model = getGenAI().getGenerativeModel({ model: "text-embedding-004" });
   const result = await model.embedContent(text);
   return result.embedding.values;
-}
-
-// Upload file to Gemini Files API
-export async function uploadToGemini(file: Buffer, mimeType: string) {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-  const result = await model.generateContent([
-    {
-      inlineData: {
-        mimeType,
-        data: file.toString("base64"),
-      },
-    },
-    "Describe this file briefly. What type is it and what does it contain?",
-  ]);
-
-  return {
-    description: result.response.text(),
-    model,
-  };
 }
 
 // Analyze file with Gemini multimodal
@@ -50,7 +38,7 @@ export async function analyzeFile(
   mimeType: string,
   instruction: string
 ): Promise<string> {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+  const model = getGenAI().getGenerativeModel({ model: "gemini-2.0-flash" });
 
   const result = await model.generateContent([
     {
@@ -76,7 +64,7 @@ export async function chatWithGemini(
 ) {
   const modelName =
     messages.length > 10 ? "gemini-2.5-pro" : "gemini-2.0-flash";
-  const model = genAI.getGenerativeModel({
+  const model = getGenAI().getGenerativeModel({
     model: modelName,
     systemInstruction: options?.systemPrompt,
     tools: options?.searchGrounding
@@ -99,4 +87,4 @@ export async function chatWithGemini(
   return result.response.text();
 }
 
-export { genAI };
+export { getGenAI as genAI };

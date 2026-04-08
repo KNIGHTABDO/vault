@@ -36,12 +36,11 @@ export async function searchMemory(
   // Update access counts
   if (data?.length) {
     for (const memory of data) {
+      const currentCount = (memory as { access_count?: number }).access_count ?? 0;
       await supabase
         .from("memories")
         .update({
-          access_count: (memory as Record<string, unknown>).access_count
-            ? ((memory as Record<string, unknown>).access_count as number) + 1
-            : 1,
+          access_count: currentCount + 1,
           last_accessed_at: new Date().toISOString(),
         })
         .eq("id", memory.id);

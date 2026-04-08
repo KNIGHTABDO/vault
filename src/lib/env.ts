@@ -10,13 +10,23 @@ const envSchema = z.object({
   NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
 });
 
-function getEnv() {
-  const parsed = envSchema.safeParse(process.env);
-  if (!parsed.success) {
-    console.error("❌ Invalid environment variables:", parsed.error.flatten().fieldErrors);
-    throw new Error("Invalid environment variables");
+// Lazy validation — only runs when env is accessed, not at import time
+let _env: z.infer<typeof envSchema> | null = null;
+
+export function getEnv() {
+  if (!_env) {
+    const parsed = envSchema.safeParse(process.env);
+    if (!parsed.success) {
+      console.error("❌ Invalid environment variables:", parsed.error.flatten().fieldErrors);
+      throw new Error("Invalid environment variables");
+    }
+    _env = parsed.data;
   }
-  return parsed.data;
+  return _env;
 }
 
-export const env = getEnv();
+export const env = new Proxy({} as z.infer<typeof envSchema>, {
+  get(_, prop) {
+    return (getEnv() as Record<string | symbol, unknown>)[prop];
+  },
+});

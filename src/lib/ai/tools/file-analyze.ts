@@ -18,10 +18,16 @@ export async function analyzeFileTool(
     return JSON.stringify({ success: false, error: "File not found" });
   }
 
+  const fileRecord = file as {
+    storage_path: string;
+    mime_type: string;
+    name: string;
+  };
+
   // Download file from Supabase Storage
   const { data: fileData, error: downloadError } = await supabase.storage
     .from("vault-files")
-    .download((file as Record<string, unknown>).storage_path as string);
+    .download(fileRecord.storage_path);
 
   if (downloadError || !fileData) {
     return JSON.stringify({
@@ -35,21 +41,14 @@ export async function analyzeFileTool(
   const buffer = Buffer.from(arrayBuffer);
 
   // Analyze with Gemini
-  const analysis = await analyzeFile(
-    buffer,
-    (file as Record<string, unknown>).mime_type as string,
-    instruction
-  );
+  const analysis = await analyzeFile(buffer, fileRecord.mime_type, instruction);
 
   // Save analysis to file record
-  await supabase
-    .from("files")
-    .update({ analysis } as never)
-    .eq("id", fileId);
+  await supabase.from("files").update({ analysis }).eq("id", fileId);
 
   return JSON.stringify({
     success: true,
-    fileName: (file as Record<string, unknown>).name,
+    fileName: fileRecord.name,
     analysis,
   });
 }
