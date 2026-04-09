@@ -729,6 +729,7 @@ export async function POST(request: Request) {
   const conversationId = typeof body?.conversationId === "string" ? body.conversationId : null;
   const toolsRequested = Boolean(body?.tools);
   const attachments = sanitizeAttachments(body?.attachments);
+  const requestedModel = typeof body?.model === "string" ? body.model.toLowerCase() : "vault";
 
   if (!messages.length) {
     return NextResponse.json({ error: "No valid messages provided" }, { status: 400 });
@@ -764,7 +765,15 @@ export async function POST(request: Request) {
   }
 
   const providers = await getProviderRegistry();
-  const coordinator = selectCoordinator(providers);
+
+  // Select coordinator based on requested model
+  let coordinator: CoordinatorProvider | null;
+  if (requestedModel === "spark" && providers.museSpark) {
+    coordinator = providers.museSpark;
+  } else {
+    // "vault" or fallback — use the existing priority chain
+    coordinator = selectCoordinator(providers);
+  }
 
   if (!coordinator) {
     return NextResponse.json(
