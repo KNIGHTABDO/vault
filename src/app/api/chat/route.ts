@@ -27,7 +27,7 @@ type GeminiProvider = {
 
 type OpenAIProvider = {
   kind: "openai";
-  source: "copilot-direct" | "copilot-proxy";
+  source: "copilot-direct" | "copilot-proxy" | "muse-spark";
   client: OpenAI;
   model: string;
   supportsTools: boolean;
@@ -39,6 +39,7 @@ type ProviderRegistry = {
   gemini: GeminiProvider | null;
   copilotDirect: OpenAIProvider | null;
   copilotProxy: OpenAIProvider | null;
+  museSpark: OpenAIProvider | null;
 };
 
 const DEFAULT_GEMINI_MODEL = "gemini-3-flash-preview";
@@ -131,18 +132,34 @@ async function getProviderRegistry(): Promise<ProviderRegistry> {
     }
   }
 
+  let museSpark: OpenAIProvider | null = null;
+  if (process.env.MUSE_SPARK_API_URL) {
+    museSpark = {
+      kind: "openai",
+      source: "muse-spark",
+      client: new OpenAI({
+        apiKey: "not-needed",
+        baseURL: process.env.MUSE_SPARK_API_URL.trim(),
+      }),
+      model: process.env.MUSE_SPARK_MODEL || "muse-spark",
+      supportsTools: false,
+    };
+  }
+
   return {
     gemini,
     copilotDirect,
     copilotProxy,
+    museSpark,
   };
 }
 
 function selectCoordinator(registry: ProviderRegistry): CoordinatorProvider | null {
-  // Copilot is the conversation coordinator when available.
+  // Priority: Copilot direct > Copilot proxy > Gemini > Muse Spark (free fallback)
   if (registry.copilotDirect) return registry.copilotDirect;
   if (registry.copilotProxy) return registry.copilotProxy;
   if (registry.gemini) return registry.gemini;
+  if (registry.museSpark) return registry.museSpark;
   return null;
 }
 
